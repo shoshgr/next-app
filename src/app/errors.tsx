@@ -1,13 +1,11 @@
-
-
 import React from 'react'
 
-const page = () => {
+const errors = () => {
   return (
     <div>
-      
+      error
     </div>
   )
 }
 
-export default page
+export default errors

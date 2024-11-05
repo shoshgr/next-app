@@ -10,11 +10,14 @@ interface UserStore {
   error: string | null;
   success: boolean;
   addUser: (user: User) => Promise<void>;
+  editUser: (user: User) => void;
+  removeUser: (id: number) => void;
   resetStatus: () => void;
   fetchAllUsers: () => Promise<void>; 
+
 }
 
-export const useUserStore = create<UserStore>((set) => ({
+export const useUserStore = create<UserStore>((set, get) => ({
   users: [],
   loading: false,
   error: null,
@@ -23,6 +26,15 @@ export const useUserStore = create<UserStore>((set) => ({
   fetchAllUsers: async () => { 
     set({ loading: true, error: null });
     try {
+     
+      const currentUsers = get().users; 
+      if (currentUsers.length > 0) {
+       
+        set({ loading: false }); 
+        return;
+      }
+  
+     
       const users = await fetchUsers();
       set({ users });
     } catch (error) {
@@ -42,7 +54,16 @@ export const useUserStore = create<UserStore>((set) => ({
     } finally {
       set({ loading: false });
     }
+  },  editUser: (updatedUser: User) => {
+    set((state) => ({
+      users: state.users.map(user => (user.id === updatedUser.id ? updatedUser : user)),
+    }));
   },
 
+  removeUser: (id: number) => {
+    set((state) => ({
+      users: state.users.filter(user => user.id != id)
+    }));
+  },
   resetStatus: () => set({ error: null, success: false }),
 }));

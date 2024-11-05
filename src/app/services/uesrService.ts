@@ -24,3 +24,16 @@ export const fetchUserById = async (id: string): Promise<User> => {
       throw new Error('An unknown error occurred');
     }
   };
+
+  export const addUser = async (newUser: User): Promise<User> => {
+    try {
+      const response = await axios.post('https://dummyjson.com/users/add', newUser);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.message || 'Failed to add user');
+      }
+      throw new Error('An unknown error occurred');
+    }
+  };
+  

@@ -1,4 +1,4 @@
-// components/UserCard.tsx
+
 'use client';
 import React from 'react';
 import { User } from '../types/User';

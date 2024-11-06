@@ -1,4 +1,4 @@
-// app/user/[id]/page.tsx
+
 import React from 'react';
 import UserDetails from '@/app/components/UserDetails';
 

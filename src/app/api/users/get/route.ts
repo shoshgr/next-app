@@ -1,20 +1,25 @@
-// app/api/users/get/route.ts
-
 import { NextResponse } from 'next/server';
+import mongoose from 'mongoose';
+import User from '@/app/types/UserSchema';  
 
 export async function GET() {
   try {
-    const res = await fetch('https://dummyjson.com/users');
-    if (!res.ok) {
-      throw new Error('Failed to fetch users');
+    const MONGO_URI = process.env.MONGO_URI || '';
+    if (!MONGO_URI) {
+      throw new Error('Missing MONGO_URI in environment variables');
     }
-    const data = await res.json();
-    const users = data.users.slice(0, 30);
+
+    if (mongoose.connection.readyState === 0) {
+      await mongoose.connect(MONGO_URI);
+      console.log('Connected to MongoDB');
+    } else {
+      console.log('Using existing MongoDB connection');
+    }
+
+    const users = await User.find();  
     return NextResponse.json({ users });
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
-    return NextResponse.json({ error: 'Unknown error occurred' }, { status: 500 });
+  } catch (error) {
+    console.error('MongoDB connection error:', error);
+    return NextResponse.json({ error: 'Failed to retrieve users', details: error.message }, { status: 500 });
   }
 }
